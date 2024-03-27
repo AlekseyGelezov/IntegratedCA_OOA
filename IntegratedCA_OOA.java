@@ -4,12 +4,15 @@
  */
 package integratedca_ooa;
 
+import java.io.*;
 import java.sql. * ;
 import java.util.Scanner;
 
 /**
  *
  * @author aleksey
+ * student number: sba23107
+ * 
  */
 public class IntegratedCA_OOA {
 
@@ -17,55 +20,62 @@ public class IntegratedCA_OOA {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String url = "jdbc:mysql://localhost:3306/col_database";
-        String user = "aleksey";
-        String password = "26325againA";
-        String query = "SELECT * FROM courses";
-        try (Connection connection = DriverManager.getConnection(url, user, password);
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
+        
+    }
+    
+    
+    // ALLOWS ACCESS OF MYSQL DATABASE & TABLES. ALSO DEFINES STRINGS AND SCANNER REQUIRED FOR TERMINAL USAGE
+    private static String SQLurl = "jdbc:mysql://localhost:3306/col_database";
+    private static String SQLuser = "aleksey";
+    private static String SQLpassword = "26325againA";
+    public static Scanner admininput = new Scanner(System.in);
+    private static String terminaluser;
 
-            // Process the results
-            while (resultSet.next()) {
-                int id = resultSet.getInt("course_id");
-                String name = resultSet.getString("course_name");
-                //String programme = resultSet.getString("course_programme");
-                System.out.println("ID: " + id + ", Name: " + name);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+    
+    // USER TERMINAL, ALLOWS USER TO LOG IN AS ADMIN, OFFICE OR LECTURER
+public static void collegeLoginInput(){
+        System.out.println("Please enter your username: ");
+        String col_username = admininput.nextLine();
+        System.out.println("Please enter your password: ");
+        String col_password = admininput.nextLine();
+       
+        if(col_username.equals("admin") && col_password.equals("java")){
+            terminaluser = "admin";
+            System.out.println("Hello, Administrator!");
+        }else if(col_username.equals("office") && col_password.equals("java")){
+            terminaluser = "Office";
+            System.out.println("Hello, Office Employee!");
+        }else if(col_username.equals("lecture") && col_password.equals("java")){
+            terminaluser = "Lecturer";
+            System.out.println("Hello, Lecturer!");
+        }else{
+            System.out.println("Login failed. Check if your username or password was correct.");
+            collegeLoginInput();
         }
+      }
 }
 
-    
-    
-    
-//public void menu(){    
-//Scanner managerDisplayInput = new Scanner(System.in);
-//int admin_input = 0;
-//
-//    
-//    
-//System.out.println("Press 1 to enter login details, 2 to view staff list, 3 to add new staff and 4 to exit the display");
-//      admin_input = managerDisplayInput.nextInt();
-//      String admin_name, admin_password;
-//      admin_name = managerDisplayInput.nextLine();
-//      
-//      switch (admin_input) {
-//          
-//       case 1:
-//           System.out.println("Enter username");
-//           admin_name = managerDisplayInput.nextLine();
-//           System.out.println("Enter password");
-//           admin_password = managerDisplayInput.nextLine();
-//           if(!admin_name.equals("admin") && !admin_password.equals("java")) {
-//           System.out.println("Invalid Login Details");
-//           break;
 //        
-//           }
-//            break;
-//      }
-//}
+//        // PRINTS OUT A COURSE REPORT
+//        String coursereportquery = "SELECT * FROM courses";
+//        try (Connection connection = DriverManager.getConnection(url, user, password);
+//             Statement statement = connection.createStatement();
+//             ResultSet resultSet = statement.executeQuery(coursereportquery)) {
+//
+//            // Process the results
+//            while (resultSet.next()) {
+//                String programmeid = resultSet.getString("programme_id");
+//                String programmename = resultSet.getString("programme_name");
+//                String programmecapacity = resultSet.getString("programme_capacity");
+//                String moduleid = resultSet.getString("module_id");
+//                String modulename = resultSet.getString("module_name");
+//                String modulecapacity = resultSet.getString("module_capacity");
+//                String location = resultSet.getString("location");
+//                String lecturerid = resultSet.getString("lecturer_id");
+//                        
+//                System.out.println("Programme ID: " + programmeid + ",Programme Name: " + programmename + ",Programme Capacity: " + programmecapacity + ",Module ID: " + moduleid + ",Module Name: " + modulename +",Module Capacity: " + modulecapacity + ",Located: " + location + ",Lecturer ID: " + lecturerid);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     
-    
-}
