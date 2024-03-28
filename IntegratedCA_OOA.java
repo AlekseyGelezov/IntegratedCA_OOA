@@ -140,6 +140,19 @@ public static void displayConsole(){
              s_report.flush();
              s_report.close();
             break;
+            
+            case 3:
+            while(l_result.next()){
+               String lecturerid = l_result.getString("lecturer_id");
+               String lecturername = l_result.getString("lecturer_name");
+               String lecturerrole = l_result.getString("lecturer_role");
+               
+               l_report.append((lecturerid)).append(",");
+               l_report.append((lecturername)).append(",");
+               l_report.append((lecturerrole)).append("\n");
+            }
+            l_report.flush();
+            l_report.close();
         }
         }
         }catch (SQLException | IOException e) {
