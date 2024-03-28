@@ -128,6 +128,18 @@ public static void displayConsole(){
             c_report.flush();
             c_report.close();
             break;
+            
+        case 2:
+              while(s_result.next()){
+                String studentname = s_result.getString("student_name");
+                String studentid = s_result.getString("student_id");
+           
+                s_report.append((studentname)).append(",");
+                s_report.append((studentid)).append("\n");
+             }
+             s_report.flush();
+             s_report.close();
+            break;
         }
         }
         }catch (SQLException | IOException e) {
