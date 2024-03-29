@@ -61,6 +61,8 @@ public static void displayConsole(){
         FileWriter s_report = new FileWriter("s_report.csv");
         
         FileWriter l_report = new FileWriter("l_report.csv");
+        
+        FileWriter id_report = new FileWriter("id_report.csv");
        
         Connection connection = DriverManager.getConnection(SQLurl, SQLuser, SQLpassword);
         System.out.println("College Database Connection Established!");
@@ -68,12 +70,11 @@ public static void displayConsole(){
         String CourseReportQuery = "SELECT * FROM Courses";
         PreparedStatement c_Statement = connection.prepareStatement(CourseReportQuery);
         ResultSet c_result = c_Statement.executeQuery();
+              
+        String GradesReportQuery = "SELECT * FROM grades";
+        PreparedStatement g_Statement = connection.prepareStatement(GradesReportQuery);
+        ResultSet g_result = g_Statement.executeQuery();
         
-//        String CourseReportQuery = "SELECT programme_id,programme_name,programme_capacity,module_id,module_name,module_capacity,location,lecturer_id FROM Courses";
-//        PreparedStatement c_Statement = connection.prepareStatement(CourseReportQuery);
-//        ResultSet c_result = c_Statement.executeQuery();
-
-       
         String StudentReportQuery = "SELECT * FROM students";
         PreparedStatement s_Statement = connection.prepareStatement(StudentReportQuery);
         ResultSet s_result = s_Statement.executeQuery();
@@ -82,8 +83,25 @@ public static void displayConsole(){
         PreparedStatement l_Statement = connection.prepareStatement(LecturerReportQuery);
         ResultSet l_result = l_Statement.executeQuery();
        
+        
+        
+        
+        
+        
+        
+        
+        
+
+//-- SELECT student_name FROM students where student_id=+student_id+ LIMIT 1
+//-- SELECT student_id from enrollments;
+//-- SELECT module_name from courses where programme_name = (SELECT programme_name from courses where programme_id=(select programme_id from enrollments where student_id=(SELECT student_id FROM students where student_name='Michael Young' LIMIT 1) LIMIT 1) LIMIT 1)
+//-- SELECT passed_module_id, grades_passed FROM grades where student_id = (SELECT student_id FROM students where student_name='Michael Young' LIMIT 1)
+//-- SELECT passed_module_id FROM grades where student_id = (SELECT student_id FROM students where student_name='Michael Young' LIMIT 1)
+// -- SELECT module_name from courses where module_id = (SELECT passed_module_id FROM grades where student_id = (SELECT student_id FROM students where student_name='Michael Young' LIMIT 1))
+        
+        
         while (true){
-            System.out.println("Enter \"1 to generate a Course Report\", \"2 to generate a Student Report\", \"3 to generate a Lecturer Report\" , \"4 to change password\", \"5 to Log out\"");
+            System.out.println("Enter \"1 to generate a Course Report\", \"2 to generate a Student Report\", \"3 to generate a Lecturer Report\" , \"4 to generate report by student ID\",\"5 to change password\", \"6 to Log out\"");
             if(terminaluser.equals("admin")){
                 System.out.println("\"6 to Manage Users\"");
             }
@@ -93,55 +111,68 @@ public static void displayConsole(){
        
         switch (user_choice) {
         case 1:
-// PRINTS OUT A COURSE REPORT
+// GENERATES A COURSE REPORT, COURSE REPORT CONTAINS PROGRAMME NAME, 
+            String c_heading = "Module,Programme,Students Enrolled,Classroom,Lecturer\n";
+            c_report.write(c_heading);
             
             while (c_result.next()) {
-                //String programmename = c_result.getString("programme_name");
-                //c_report.append((programmename)).append(",");
+                c_report.append((c_result.getString("module_name"))).append(",");          
                 c_report.append((c_result.getString("programme_name"))).append(",");
-                
-                
-                //String programmecapacity = c_result.getString("programme_capacity");
-                //c_report.append((programmecapacity)).append(",");
-                c_report.append((c_result.getString("programme_name"))).append(",");
-
-                
-                //String programmecapacity = c_result.getString("programme_capacity");
-                //c_report.append((programmecapacity)).append(",");
-                c_report.append((c_result.getString("programme_capacity"))).append(",");
-                
-                
-                //String modulename = c_result.getString("module_name");
-                //c_report.append((modulename)).append(",");
-                c_report.append((c_result.getString("module_name"))).append(",");
-                
-                int modulecapacity = c_result.getInt("module_capacity");
-                c_report.append(String.valueOf(modulecapacity)).append(",");
-                
-                //String location = c_result.getString("location");
+                c_report.append(String.valueOf(c_result.getInt("module_capacity"))).append(",");
                 c_report.append(c_result.getString("location")).append(",");
-                
-                //------------------
                 String lecturerid = c_result.getString("lecturer_id");
                     if (lecturerid != null) {
-                                        //System.out.print(lecturerid);
-                        String lecturernamequery = "SELECT lecturer_name FROM lecturers WHERE lecturer_id = '"  + lecturerid + "'";
-                        //System.out.print(lecturernamequery + " - 1\n");
-                        PreparedStatement PreparedLecturerNameStatement = connection.prepareStatement(lecturernamequery);
-                        //System.out.print(PreparedLecturerNameStatement + " - 2\n");
-                
-                        ResultSet lecturerNameSet = PreparedLecturerNameStatement.executeQuery();
-                        //System.out.print(lecturerNameSet + " - 3\n");
-
-                        //System.out.print(lecturerNameSet.getString(1) + " - 4\n");
+                        String lecturernamequery = "SELECT lecturer_name FROM lecturers WHERE lecturer_id = '"  + lecturerid + "'";                      
+                        PreparedStatement PreparedLecturerNameStatement = connection.prepareStatement(lecturernamequery);               
+                        ResultSet lecturerNameSet = PreparedLecturerNameStatement.executeQuery();                       
                         if(lecturerNameSet.next()){
-                            //System.out.print(lecturerNameSet.getString(1) + " - 4\n");
                             String lecturerName = lecturerNameSet.getString("lecturer_name");
-                            //System.out.print(lecturerName + " - 5\n");
                             c_report.append((lecturerName)).append("\n");
-                        }
-                        
-                    }
+                        }                        
+                    }                
+            }
+        //write here outside while
+
+            c_report.flush();
+            c_report.close();
+            break;
+            
+        case 2:
+            String s_heading = "Student ID,Student Name,Programme,Current Module,Completed Module,Grades,Module To Repeat\n";
+            s_report.write(s_heading);
+              while(g_result.next()){
+                s_report.append((g_result.getString("student_id"))).append(",");
+                String studentId = g_result.getString("student_id");
+                    if (studentId != null) {
+                        String studentnamequery = "SELECT student_name FROM students WHERE student_id = '"  + studentId + "'";                      
+                        PreparedStatement PreparedStudentNameStatement = connection.prepareStatement(studentnamequery);               
+                        ResultSet studentNameSet = PreparedStudentNameStatement.executeQuery();                       
+                        if(studentNameSet.next()){
+                            String studentName = studentNameSet.getString("student_name");
+                            s_report.append((studentName)).append(",");
+                        }                        
+                    } 
+                String moduleId = g_result.getString("module_id");
+                    if (moduleId != null) {
+                        String modulenamequery = "SELECT module_name, programme_name FROM courses WHERE module_id = '"  + moduleId + "'";                      
+                        PreparedStatement PreparedModuleNameStatement = connection.prepareStatement(modulenamequery);               
+                        ResultSet moduleNameSet = PreparedModuleNameStatement.executeQuery();                       
+                        if(moduleNameSet.next()){
+                            String programmeName = moduleNameSet.getString("programme_name");
+                            s_report.append((programmeName)).append(","); 
+                            String moduleName = moduleNameSet.getString("module_name");
+                            s_report.append((moduleName)).append(",");
+                           
+                        }                        
+                    }                              
+                s_report.append((g_result.getString("grades_passed"))).append("\n");
+             }
+              
+             
+                    
+             s_report.flush();
+             s_report.close();
+            break;
                                 
                 
                 
