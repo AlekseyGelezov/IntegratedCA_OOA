@@ -68,8 +68,13 @@ public static void displayConsole(){
         String CourseReportQuery = "SELECT * FROM Courses";
         PreparedStatement c_Statement = connection.prepareStatement(CourseReportQuery);
         ResultSet c_result = c_Statement.executeQuery();
+        
+//        String CourseReportQuery = "SELECT programme_id,programme_name,programme_capacity,module_id,module_name,module_capacity,location,lecturer_id FROM Courses";
+//        PreparedStatement c_Statement = connection.prepareStatement(CourseReportQuery);
+//        ResultSet c_result = c_Statement.executeQuery();
+
        
-        String StudentReportQuery = "SELECT * FROM Students";
+        String StudentReportQuery = "SELECT * FROM students";
         PreparedStatement s_Statement = connection.prepareStatement(StudentReportQuery);
         ResultSet s_result = s_Statement.executeQuery();
        
@@ -89,25 +94,84 @@ public static void displayConsole(){
         switch (user_choice) {
         case 1:
 // PRINTS OUT A COURSE REPORT
+            
             while (c_result.next()) {
-                String programmeid = c_result.getString("programme_id");
+                //String programmename = c_result.getString("programme_name");
+                //c_report.append((programmename)).append(",");
+                c_report.append((c_result.getString("programme_name"))).append(",");
                 
-                String programmename = c_result.getString("programme_name");
                 
-                String programmecapacity = c_result.getString("programme_capacity");
+                //String programmecapacity = c_result.getString("programme_capacity");
+                //c_report.append((programmecapacity)).append(",");
+                c_report.append((c_result.getString("programme_name"))).append(",");
+
                 
-                String moduleid = c_result.getString("module_id");
+                //String programmecapacity = c_result.getString("programme_capacity");
+                //c_report.append((programmecapacity)).append(",");
+                c_report.append((c_result.getString("programme_capacity"))).append(",");
                 
-                String modulename = c_result.getString("module_name");
+                
+                //String modulename = c_result.getString("module_name");
+                //c_report.append((modulename)).append(",");
+                c_report.append((c_result.getString("module_name"))).append(",");
                 
                 int modulecapacity = c_result.getInt("module_capacity");
+                c_report.append(String.valueOf(modulecapacity)).append(",");
                 
-                String location = c_result.getString("location");
+                //String location = c_result.getString("location");
+                c_report.append(c_result.getString("location")).append(",");
                 
+                //------------------
                 String lecturerid = c_result.getString("lecturer_id");
-                       
+                    if (lecturerid != null) {
+                                        //System.out.print(lecturerid);
+                        String lecturernamequery = "SELECT lecturer_name FROM lecturers WHERE lecturer_id = '"  + lecturerid + "'";
+                        //System.out.print(lecturernamequery + " - 1\n");
+                        PreparedStatement PreparedLecturerNameStatement = connection.prepareStatement(lecturernamequery);
+                        //System.out.print(PreparedLecturerNameStatement + " - 2\n");
                 
-                c_report.append((programmeid)).append(",");
+                        ResultSet lecturerNameSet = PreparedLecturerNameStatement.executeQuery();
+                        //System.out.print(lecturerNameSet + " - 3\n");
+
+                        //System.out.print(lecturerNameSet.getString(1) + " - 4\n");
+                        if(lecturerNameSet.next()){
+                            //System.out.print(lecturerNameSet.getString(1) + " - 4\n");
+                            String lecturerName = lecturerNameSet.getString("lecturer_name");
+                            //System.out.print(lecturerName + " - 5\n");
+                            c_report.append((lecturerName)).append("\n");
+                        }
+                        
+                    }
+                                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+              /*  
+                //System.out.print(lecturerid);
+                String lecturernamequery = "SELECT lecturer_name FROM lecturers WHERE lecturer_id = '"  + lecturerid + "'";
+                //String lecturernamequery = "SELECT lecturer_name FROM lecturers WHERE lecturer_id = 'L001'";
+                System.out.print(lecturernamequery + " - 1\n");
+                PreparedStatement PreparedLecturerNameStatement = connection.prepareStatement(lecturernamequery);
+                System.out.print(PreparedLecturerNameStatement + " - 2\n");
+                
+                ResultSet lecturerNameSet = PreparedLecturerNameStatement.executeQuery();
+                System.out.print(lecturerNameSet + " - 3\n");
+
+                //System.out.print(lecturerNameSet.getString(1) + " - 4\n");
+                if(lecturerNameSet.next()){
+                    System.out.print(lecturerNameSet.getString(1) + " - 4\n");
+                    String lecturerName = lecturerNameSet.getString("lecturer_name");
+                    System.out.print(lecturerName + " - 5\n");
+                    c_report.append((lecturerName)).append(",");
+                }
+                
                 
                 c_report.append((programmename)).append(",");
                 
@@ -120,8 +184,9 @@ public static void displayConsole(){
                 c_report.append(String.valueOf(modulecapacity)).append(",");
                 
                 c_report.append((location)).append(",");
-                
-                c_report.append((lecturerid)).append(",");
+                */
+                //c_report.append((lecturerid)).append("\n");
+                //c_report.append((lecturerName)).append("\n");
             }
             
         //write here outside while
