@@ -101,14 +101,15 @@ public static void displayConsole(){
         
         
         while (true){
-            System.out.println("Enter \"1 to generate a Course Report\", \"2 to generate a Student Report\", \"3 to generate a Lecturer Report\" , \"4 to generate report by student ID\",\"5 to change password\", \"6 to Log out\"");
+            System.out.println("Enter \"1 to generate a Course Report\", \"2 to generate a Student Report\", \"3 to generate a Lecturer Report\" , \"4 to change password\",\"5 to generate report by student ID\", \"6 to Log out\"");
             if(terminaluser.equals("admin")){
-                System.out.println("\"6 to Manage Users\"");
+                System.out.println("\"7 to Manage Users\"");
             }
             System.out.println("Select an option: ");
             int user_choice = user_input.nextInt();
             user_input.nextLine();
        
+            
         switch (user_choice) {
         case 1:
 // GENERATES A COURSE REPORT, COURSE REPORT CONTAINS PROGRAMME NAME, 
@@ -173,69 +174,6 @@ public static void displayConsole(){
              s_report.flush();
              s_report.close();
             break;
-                                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-              /*  
-                //System.out.print(lecturerid);
-                String lecturernamequery = "SELECT lecturer_name FROM lecturers WHERE lecturer_id = '"  + lecturerid + "'";
-                //String lecturernamequery = "SELECT lecturer_name FROM lecturers WHERE lecturer_id = 'L001'";
-                System.out.print(lecturernamequery + " - 1\n");
-                PreparedStatement PreparedLecturerNameStatement = connection.prepareStatement(lecturernamequery);
-                System.out.print(PreparedLecturerNameStatement + " - 2\n");
-                
-                ResultSet lecturerNameSet = PreparedLecturerNameStatement.executeQuery();
-                System.out.print(lecturerNameSet + " - 3\n");
-
-                //System.out.print(lecturerNameSet.getString(1) + " - 4\n");
-                if(lecturerNameSet.next()){
-                    System.out.print(lecturerNameSet.getString(1) + " - 4\n");
-                    String lecturerName = lecturerNameSet.getString("lecturer_name");
-                    System.out.print(lecturerName + " - 5\n");
-                    c_report.append((lecturerName)).append(",");
-                }
-                
-                
-                c_report.append((programmename)).append(",");
-                
-                c_report.append((programmecapacity)).append(",");
-                
-                c_report.append((moduleid)).append(",");
-                
-                c_report.append((modulename)).append(",");
-                
-                c_report.append(String.valueOf(modulecapacity)).append(",");
-                
-                c_report.append((location)).append(",");
-                */
-                //c_report.append((lecturerid)).append("\n");
-                //c_report.append((lecturerName)).append("\n");
-            }
-            
-        //write here outside while
-            c_report.flush();
-            c_report.close();
-            break;
-            
-        case 2:
-              while(s_result.next()){
-                String studentname = s_result.getString("student_name");
-                String studentid = s_result.getString("student_id");
-           
-                s_report.append((studentname)).append(",");
-                s_report.append((studentid)).append("\n");
-             }
-             s_report.flush();
-             s_report.close();
-            break;
             
             case 3:
             String l_heading = "Lecturer Name,Lecturer Role,Programme ID,Module Name,Students Enrolled\n";
@@ -260,8 +198,12 @@ public static void displayConsole(){
             l_report.flush();
             l_report.close();
             break;
+            
+//            case 4:
+//                collegeChangePassword();
+//            break;
             /*
-            case 4:
+            case 5:
             System.out.println("Enter valid Student ID");
             String studentId = user_input.nextLine();
             String id_heading = "Student ID,Student Name,Programme,Current Module,Completed Module,Grades\n";
@@ -302,21 +244,111 @@ public static void displayConsole(){
              id_report.close();
             break;
             */
+            // case 6:
+            // System.out.println("Logging out...");
+            //   System.exit(0);
+            //break;
+            
+            // case 7:
+            // collegeManageUsers();
+            // break;
+            
+        }
         }
         }catch (SQLException | IOException e) {
             e.printStackTrace();
         }
-        
 }
+
+//        private static void collegeChangePassword(){
+//        System.out.println("Enter old password: ");
+//        String oldPassword = user_input.nextLine();
+//        if(oldPassword.equals(change_password)){
+//            System.out.println("Enter new password: ");
+//            String new_password = user_input.nextLine();
+//            change_password = new_password;
+//            System.out.println("Password was changed, try logging in again.");
+//            collegeLoginInput();
+//        }else{
+//            System.out.println("Incorrect password. Please try again.");
+//        }
+//    }
+//        
+//        private static void collegeManageUsers(){
+//        System.out.println("Manage users");
+//        System.out.println("Enter \"1 to add a user\", \"2 to delete a user\", \"3 to update a user\" , \"4 to view users\", \"5 to go back to main menu\"");
+//        int manageUserChoice = user_input.nextInt();
+//        user_input.nextLine();
+//       
+//        switch(manageUserChoice){
+//            case 1:
+//                manage_AddUsers();
+//                break;
+//            case 2:
+//                manage_removeUsers();
+//                break;
+//            case 3:
+//                manage_UpdateUsers();
+//                break;
+//            case 4:
+//                manage_ViewUsers();
+//                break;
+//            case 5:
+//                System.out.println("Returning to the Main Menu...");
+//                displayConsole();
+//                break;
+//            default:
+//                System.out.println("Invalid Input: Please choose between 1 and 5.");
+//        }
+//    }
+//        
+//    private static void manage_AddUsers(){
+//        System.out.println("Enter a user you wish to add: ");
+//        String addedUser = user_input.nextLine();
+//        userManagement.add(addedUser);
+//        System.out.println("User " + addedUser + " added");
+//    }
+//    
+//    private static void manage_removeUsers(){
+//        System.out.println("Enter a user you wish to remove: ");
+//        String user_removed = user_input.nextLine();
+//        if(userManagement.contains(user_removed)){
+//            userManagement.remove(user_removed);
+//            System.out.println("User " + user_removed + " removed");
+//        }else{
+//            System.out.println("ERROR: User does not exist within the college's database.");
+//        }
+//    }
+//    
+//    private static void manage_UpdateUsers(){
+//        System.out.println("Please enter a user name you wish to change: ");
+//        String current_user = user_input.nextLine();
+//        System.out.println("Please enter the username you wish to change your old user name to: ");
+//        String user_new = user_input.nextLine();
+//        if(userManagement.contains(current_user)){
+//            userManagement.remove(current_user);
+//            userManagement.add(user_new);
+//            System.out.println("You have changed your old username to " + user_new);
+//           
+//        }else{
+//            System.out.println("ERROR: This user does not exist within this College");
+//        }
+//    }
+//    
+// private static void manage_ViewUsers(){
+//        for (String listOfUsers : userManagement){
+//            System.out.println(listOfUsers);
+        
+        
+
+
 public static void main(String[] args) {
         collegeLoginInput();
         displayConsole();
+        //collegeManageUsers();
 }
 }
-
-
-
- /*
+                /*
                 // need to figure out how to deal with null values
                 String failedModuleId = g_result.getString("failed_module_id");
                     if (failedModuleId != null) {
@@ -330,8 +362,12 @@ public static void main(String[] args) {
                     } 
                 */
 
-//=============================================== 
-
+                
+                //----------------
+                //call courses by module_id to get module name
+                //call courses by module_id to get programme name   
+                //call courses by module_id to get pass module name
+//===============================================           
 /*
                 String failedModuleId = g_result.getString("failed_module_id");
                     if (moduleId != null) {
@@ -345,3 +381,14 @@ public static void main(String[] args) {
                     }  
                                 
 */
+
+                
+ //==============================================                  
+ //-- SELECT student_id FROM students where student_name='Michael Young' LIMIT 1
+ //-- SELECT student_id from enrollments;
+ //-- SELECT module_name from courses where programme_name = (SELECT programme_name from courses where programme_id=(select programme_id from enrollments where student_id=(SELECT student_id FROM students where student_name='Michael Young' LIMIT 1) LIMIT 1) LIMIT 1)
+ //-- SELECT passed_module_id, grades_passed FROM grades where student_id = (SELECT student_id FROM students where student_name='Michael Young' LIMIT 1)
+ //-- SELECT passed_module_id FROM grades where student_id = (SELECT student_id FROM students where student_name='Michael Young' LIMIT 1)
+// -- SELECT module_name from courses where module_id = (SELECT passed_module_id FROM grades where student_id = (SELECT student_id FROM students where student_name='Michael Young' LIMIT 1))
+
+//==============================================                
