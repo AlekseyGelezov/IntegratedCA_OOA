@@ -260,6 +260,48 @@ public static void displayConsole(){
             l_report.flush();
             l_report.close();
             break;
+            /*
+            case 4:
+            System.out.println("Enter valid Student ID");
+            String studentId = user_input.nextLine();
+            String id_heading = "Student ID,Student Name,Programme,Current Module,Completed Module,Grades\n";
+            id_report.write(id_heading);
+              //while(g_result.next()){
+                //s_report.append((g_result.getString("student_id"))).append(",");
+                //String studentId = g_result.getString("student_id");
+                id_report.append(studentId).append(",");
+
+                String studentnamequery = "SELECT student_name FROM students WHERE student_id = '"  + studentId + "' LIMIT 1";
+                //System.out.println(studentnamequery + "    <--------------------------");
+                PreparedStatement PreparedStudentNameStatement = connection.prepareStatement(studentnamequery);               
+                ResultSet studentNameSet = PreparedStudentNameStatement.executeQuery();                       
+                if(studentNameSet.next()){
+                    String studentName = studentNameSet.getString("student_name");
+                    id_report.append((studentName)).append(",");
+                    }                        
+
+                String moduleId = g_result.getString("module_id");
+                    if (moduleId != null) {
+                        String modulenamequery = "SELECT module_name, programme_name FROM courses WHERE module_id = '"  + moduleId + "'";                      
+                        PreparedStatement PreparedModuleNameStatement = connection.prepareStatement(modulenamequery);               
+                        ResultSet moduleNameSet = PreparedModuleNameStatement.executeQuery();                       
+                        if(moduleNameSet.next()){
+                            String programmeName = moduleNameSet.getString("programme_name");
+                            id_report.append((programmeName)).append(","); 
+                            String moduleName = moduleNameSet.getString("module_name");
+                            id_report.append((moduleName)).append(",");
+                           
+                        }                        
+                    }                             
+               // id_report.append((g_result.getString("grades_passed"))).append("\n");
+             //}
+              
+             
+                    
+             id_report.flush();
+             id_report.close();
+            break;
+            */
         }
         }catch (SQLException | IOException e) {
             e.printStackTrace();
