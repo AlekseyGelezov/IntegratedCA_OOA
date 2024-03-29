@@ -238,18 +238,28 @@ public static void displayConsole(){
             break;
             
             case 3:
-            while(l_result.next()){
-               String lecturerid = l_result.getString("lecturer_id");
-               String lecturername = l_result.getString("lecturer_name");
-               String lecturerrole = l_result.getString("lecturer_role");
-               
-               l_report.append((lecturerid)).append(",");
-               l_report.append((lecturername)).append(",");
-               l_report.append((lecturerrole)).append("\n");
+            String l_heading = "Lecturer Name,Lecturer Role,Programme ID,Module Name,Students Enrolled\n";
+            l_report.write(l_heading);
+            while(c_result.next()){
+                String lecturerid = c_result.getString("lecturer_id");
+                    if (lecturerid != null) {
+                        String lecturernamequery = "SELECT lecturer_name, lecturer_role FROM lecturers WHERE lecturer_id = '"  + lecturerid + "'";                      
+                        PreparedStatement PreparedLecturerNameStatement = connection.prepareStatement(lecturernamequery);               
+                        ResultSet lecturerNameSet = PreparedLecturerNameStatement.executeQuery();                       
+                        if(lecturerNameSet.next()){
+                            String lecturerName = lecturerNameSet.getString("lecturer_name");
+                            l_report.append((lecturerName)).append(",");
+                            String lecturerRole = lecturerNameSet.getString("lecturer_role");
+                            l_report.append((lecturerRole)).append(",");
+                        }                        
+                    }                
+                l_report.append((c_result.getString("programme_id"))).append(",");
+                l_report.append((c_result.getString("module_name"))).append(",");
+                l_report.append(String.valueOf(c_result.getInt("module_capacity"))).append("\n");
             }
             l_report.flush();
             l_report.close();
-        }
+            break;
         }
         }catch (SQLException | IOException e) {
             e.printStackTrace();
@@ -261,3 +271,35 @@ public static void main(String[] args) {
         displayConsole();
 }
 }
+
+
+
+ /*
+                // need to figure out how to deal with null values
+                String failedModuleId = g_result.getString("failed_module_id");
+                    if (failedModuleId != null) {
+                        String failedmodulenamequery = "SELECT module_name FROM courses WHERE module_id = '"  + failedModuleId + "'";                      
+                        PreparedStatement PreparedFailedModuleNameStatement = connection.prepareStatement(failedmodulenamequery);               
+                        ResultSet failedModuleNameSet = PreparedFailedModuleNameStatement.executeQuery();                       
+                        if(failedModuleNameSet.next()){
+                            String moduleName = failedModuleNameSet.getString("module_name");
+                            s_report.append((moduleName)).append("\n");                          
+                        }                       
+                    } 
+                */
+
+//=============================================== 
+
+/*
+                String failedModuleId = g_result.getString("failed_module_id");
+                    if (moduleId != null) {
+                        String failedmodulenamequery = "SELECT module_name FROM courses WHERE module_id = '"  + failedModuleId + "'";                      
+                        PreparedStatement PreparedFailedModuleNameStatement = connection.prepareStatement(failedmodulenamequery);               
+                        ResultSet failedModuleNameSet = PreparedFailedModuleNameStatement.executeQuery();                       
+                        if(failedModuleNameSet.next()){
+                            String moduleName = failedModuleNameSet.getString("module_name");
+                            s_report.append((moduleName)).append(",");                          
+                        }                        
+                    }  
+                                
+*/
