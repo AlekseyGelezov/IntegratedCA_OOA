@@ -40,17 +40,12 @@ public class IntegratedCA_OOA {
         String col_password = user_input.nextLine();
         //--------------------------------------------------------------------
         String loginNameQuery = "SELECT user_full_name, user_login_name, user_password FROM users WHERE user_login_name = '" + col_username + "'";
-        PreparedStatement PreparedLoginNameStatement = init_connection.prepareStatement(loginNameQuery);
-        ResultSet loginNameSet = PreparedLoginNameStatement.executeQuery();
+        PreparedStatement loginNameStatement = init_connection.prepareStatement(loginNameQuery);
+        ResultSet loginNameSet = loginNameStatement.executeQuery();
         if (loginNameSet.next()) {
             String userFullName = loginNameSet.getString("user_full_name");
-            String userLoginName = loginNameSet.getString("user_login_name");
             String userPassword = loginNameSet.getString("user_password");
             
-            // not registered
-            if (userLoginName.equals("") || userLoginName.equals(NULL)) {
-                System.out.println("User is not registered");
-            }
             // admin
             if (col_username.equals("admin") && col_password.equals(userPassword)) {
                 System.out.println("Hello, " + userFullName);
@@ -136,8 +131,8 @@ public class IntegratedCA_OOA {
 //                System.out.println(lecturerid + " <--------Lecturer ID");
                             if (lecturerid != null) {
                                 String lecturernamequery = "SELECT lecturer_name FROM lecturers WHERE lecturer_id = '" + lecturerid + "'";
-                                PreparedStatement PreparedLecturerNameStatement = connection.prepareStatement(lecturernamequery);
-                                ResultSet lecturerNameSet = PreparedLecturerNameStatement.executeQuery();
+                                PreparedStatement lecturerNameStatement = connection.prepareStatement(lecturernamequery);
+                                ResultSet lecturerNameSet = lecturerNameStatement.executeQuery();
                                 if (lecturerNameSet.next()) {
                                     String lecturerName = lecturerNameSet.getString("lecturer_name");
                                     c_report.append((lecturerName)).append("\n");
@@ -158,8 +153,8 @@ public class IntegratedCA_OOA {
                             String studentId = g_result.getString("student_id");
                             if (studentId != null) {
                                 String studentnamequery = "SELECT student_name FROM students WHERE student_id = '" + studentId + "'";
-                                PreparedStatement PreparedStudentNameStatement = connection.prepareStatement(studentnamequery);
-                                ResultSet studentNameSet = PreparedStudentNameStatement.executeQuery();
+                                PreparedStatement studentNameStatement = connection.prepareStatement(studentnamequery);
+                                ResultSet studentNameSet = studentNameStatement.executeQuery();
                                 if (studentNameSet.next()) {
                                     String studentName = studentNameSet.getString("student_name");
                                     s_report.append((studentName)).append(",");
@@ -168,8 +163,8 @@ public class IntegratedCA_OOA {
                             String moduleId = g_result.getString("module_id");
                             if (moduleId != null) {
                                 String modulenamequery = "SELECT module_name, programme_name FROM courses WHERE module_id = '" + moduleId + "'";
-                                PreparedStatement PreparedModuleNameStatement = connection.prepareStatement(modulenamequery);
-                                ResultSet moduleNameSet = PreparedModuleNameStatement.executeQuery();
+                                PreparedStatement moduleNameStatement = connection.prepareStatement(modulenamequery);
+                                ResultSet moduleNameSet = moduleNameStatement.executeQuery();
                                 if (moduleNameSet.next()) {
                                     String programmeName = moduleNameSet.getString("programme_name");
                                     s_report.append((programmeName)).append(",");
@@ -201,8 +196,8 @@ public class IntegratedCA_OOA {
                             String lecturerid = c_result.getString("lecturer_id");
                             if (lecturerid != null) {
                                 String lecturernamequery = "SELECT lecturer_name, lecturer_role FROM lecturers WHERE lecturer_id = '" + lecturerid + "'";
-                                PreparedStatement PreparedLecturerNameStatement = connection.prepareStatement(lecturernamequery);
-                                ResultSet lecturerNameSet = PreparedLecturerNameStatement.executeQuery();
+                                PreparedStatement lecturerNameStatement = connection.prepareStatement(lecturernamequery);
+                                ResultSet lecturerNameSet = lecturerNameStatement.executeQuery();
                                 if (lecturerNameSet.next()) {
                                     String lecturerName = lecturerNameSet.getString("lecturer_name");
                                     l_report.append((lecturerName)).append(",");
@@ -229,8 +224,8 @@ public class IntegratedCA_OOA {
 //                            String lecturerid = c_result.getString("lecturer_id");
 //                            if (lecturerid != null) {
                             String lecturernamequery = "SELECT lecturer_name, lecturer_role FROM lecturers WHERE lecturer_id = '" + lecturerid + "'";
-                            PreparedStatement PreparedLecturerNameStatement = connection.prepareStatement(lecturernamequery);
-                            ResultSet lecturerNameSet = PreparedLecturerNameStatement.executeQuery();
+                            PreparedStatement lecturerNameStatement = connection.prepareStatement(lecturernamequery);
+                            ResultSet lecturerNameSet = lecturerNameStatement.executeQuery();
                             if (lecturerNameSet.next()) {
                                 String lecturerName = lecturerNameSet.getString("lecturer_name");
                                 l_report_by_id.append((lecturerName)).append(",");
@@ -257,52 +252,52 @@ public class IntegratedCA_OOA {
                         s_report_by_id.write(s_heading_id);
                         s_report_by_id.append((studentId)).append(",");
                         String studentnamequery = "SELECT student_name FROM students WHERE student_id = '" + studentId + "'";
-                        PreparedStatement PreparedStudentNameStatement = connection.prepareStatement(studentnamequery);
-                        ResultSet studentNameSet = PreparedStudentNameStatement.executeQuery();
+                        PreparedStatement studentNameStatement = connection.prepareStatement(studentnamequery);
+                        ResultSet studentNameSet = studentNameStatement.executeQuery();
                         if (studentNameSet.next()) {
                             String studentName = studentNameSet.getString("student_name");
                             s_report_by_id.append((studentName)).append(",");
                         }
 
                         String programmeNameQuery = "SELECT programme_name FROM courses WHERE programme_id = (SELECT programme_id FROM grades WHERE student_id = '" + studentId + "') limit 1";
-                        PreparedStatement PreparedProgNameStatement = connection.prepareStatement(programmeNameQuery);
-                        ResultSet progNameSet = PreparedProgNameStatement.executeQuery();
+                        PreparedStatement programNameStatement = connection.prepareStatement(programmeNameQuery);
+                        ResultSet progNameSet = programNameStatement.executeQuery();
                         if (progNameSet.next()) {
                             String programmeName = progNameSet.getString("programme_name");
                             s_report_by_id.append((programmeName)).append(",");
                         }
                         String currentModuleNameQuery = "SELECT module_name FROM courses WHERE module_id = (SELECT module_id FROM grades WHERE student_id = '" + studentId + "')";
-                        PreparedStatement PreparedModNameStatement = connection.prepareStatement(currentModuleNameQuery);
-                        ResultSet modNameSet = PreparedModNameStatement.executeQuery();
+                        PreparedStatement moduleNameStatement = connection.prepareStatement(currentModuleNameQuery);
+                        ResultSet modNameSet = moduleNameStatement.executeQuery();
                         if (modNameSet.next()) {
                             String moduleName = modNameSet.getString("module_name");
                             s_report_by_id.append((moduleName)).append(",");
                         }
                         String passedModuleNameQuery = "SELECT module_name FROM courses WHERE module_id = (SELECT passed_module_id FROM grades WHERE student_id = '" + studentId + "')";
-                        PreparedStatement PreparedPassModNameStatement = connection.prepareStatement(passedModuleNameQuery);
-                        ResultSet passModNameSet = PreparedPassModNameStatement.executeQuery();
+                        PreparedStatement passedModuleNameStatement = connection.prepareStatement(passedModuleNameQuery);
+                        ResultSet passModNameSet = passedModuleNameStatement.executeQuery();
                         if (passModNameSet.next()) {
                             String passedModuleName = passModNameSet.getString("module_name");
                             s_report_by_id.append((passedModuleName)).append(",");
                         }
                         String passedModuleGradesQuery = "SELECT grades_passed FROM grades WHERE student_id = '" + studentId + "'";
-                        PreparedStatement PreparedPassModGradesStatement = connection.prepareStatement(passedModuleGradesQuery);
-                        ResultSet passModGradesSet = PreparedPassModGradesStatement.executeQuery();
+                        PreparedStatement passedModuleGradesStatement = connection.prepareStatement(passedModuleGradesQuery);
+                        ResultSet passModGradesSet = passedModuleGradesStatement.executeQuery();
                         if (passModGradesSet.next()) {
                             String passedModuleGrades = passModGradesSet.getString("grades_passed");
                             s_report_by_id.append((passedModuleGrades)).append(",");
                         }
                         String failedModuleNameQuery = "SELECT module_name FROM courses WHERE module_id = (select failed_module_id from grades where student_id = '" + studentId + "')";
-                        PreparedStatement PreparedFailedModNameStatement = connection.prepareStatement(failedModuleNameQuery);
-                        ResultSet failedModNameSet = PreparedFailedModNameStatement.executeQuery();
+                        PreparedStatement failedModuleNameStatement = connection.prepareStatement(failedModuleNameQuery);
+                        ResultSet failedModNameSet = failedModuleNameStatement.executeQuery();
                         if (failedModNameSet.next()) {
                             String failedModuleName = failedModNameSet.getString("module_name");
                             s_report_by_id.append((failedModuleName)).append(",");
                         }
                                                 
                         String studentFeedbackQuery = "SELECT feedback FROM feedback WHERE student_id = '" + studentId + "'";
-                        PreparedStatement PreparedFeedbackStatement = connection.prepareStatement(studentFeedbackQuery);
-                        ResultSet feedbackSet = PreparedFeedbackStatement.executeQuery();
+                        PreparedStatement feedbackStatement = connection.prepareStatement(studentFeedbackQuery);
+                        ResultSet feedbackSet = feedbackStatement.executeQuery();
                         if (feedbackSet.next()) {
                             String feedback = feedbackSet.getString("feedback");
                             s_report_by_id.append((feedback)).append("\n");
@@ -311,6 +306,13 @@ public class IntegratedCA_OOA {
                         s_report_by_id.flush();
                         s_report_by_id.close();
                         break;
+
+
+
+
+
+
+
                        
 // ALLOWS THE USER TO CHANGE THEIR PASSWORD IF THEY'RE ADMIN, OFFICE, OR LECTURER
                     case 6:
@@ -319,11 +321,12 @@ public class IntegratedCA_OOA {
                         String newPassword = user_input.nextLine();
                         
                         String changeOwnPassword = "UPDATE users SET user_password = '" +newPassword+"' WHERE user_login_name = '" +terminaluser+"';";
-                        PreparedStatement PreparedChangeOwnPasswordStatement = connection.prepareStatement(changeOwnPassword);
-                        PreparedChangeOwnPasswordStatement.executeUpdate();
+                        PreparedStatement changePasswordStatement = connection.prepareStatement(changeOwnPassword);
+                        changePasswordStatement.executeUpdate();
                         
                         System.out.println("Please, logout and login again");
                         break;
+
                         
 // LETS THE USER LOG OUT. ENDS THE TERMINAL.
                     case 7:
@@ -335,8 +338,8 @@ public class IntegratedCA_OOA {
 // ALLOWS THE ADMIN TO ADD NEW USERS TO THE TERMINAL. ROLES THAT CAN BE ADDED ARE LECTURER AND OFFICE
                     case 8:
                         String lastUserIdquery = "SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1;";
-                        PreparedStatement PreparedLastuserIdStatement = connection.prepareStatement(lastUserIdquery);
-                        ResultSet lastUserIdSet = PreparedLastuserIdStatement.executeQuery();
+                        PreparedStatement lastUserIDStatement = connection.prepareStatement(lastUserIdquery);
+                        ResultSet lastUserIdSet = lastUserIDStatement.executeQuery();
                         if (lastUserIdSet.next()) {
                             String lastUserId = lastUserIdSet.getString("user_id");
                             System.out.println("The last user ID registered in the system is: " + lastUserId);
@@ -351,19 +354,21 @@ public class IntegratedCA_OOA {
                             System.out.println("Please, enter new user password (max 16 characters)");
                             String newUserPassword = user_input.nextLine();
                             String createNewUser = "INSERT INTO users(user_id,user_full_name,user_role,user_login_name,user_password) VALUES('" +newUserId+"','" +newUserName+"','" +newUserRole+"','" +newUserLoginName+ "','" +newUserPassword+ "');";
-                            PreparedStatement PreparedCreateUserStatement = connection.prepareStatement(createNewUser);
-                            PreparedCreateUserStatement.execute();
+                            PreparedStatement createUserStatement = connection.prepareStatement(createNewUser);
+                            createUserStatement.execute();
                         }
                         break;
+
                         
 // ALLOWS THE ADMIN TO DELETE A USER FROM THE TERMINAL  
                         case 9:
                         System.out.println("Please, enter user ID to delete");
                         String userIdToDelete = user_input.nextLine();
                         String deleteUser = "DELETE FROM users where user_id = '" +userIdToDelete+ "'";
-                        PreparedStatement PreparedDeleteUserStatement = connection.prepareStatement(deleteUser);
-                        PreparedDeleteUserStatement.execute();
+                        PreparedStatement deleteUserIDStatement = connection.prepareStatement(deleteUser);
+                        deleteUserIDStatement.execute();
                         break;    
+    
                         
                         case 10:
                         // update user password
@@ -372,9 +377,10 @@ public class IntegratedCA_OOA {
                         System.out.println("Please, enter new password");
                         String userNewPassword = user_input.nextLine();
                         String updateUser = "UPDATE users SET user_password = '" +userNewPassword+ "' WHERE user_id = '" +userIdToUpdate+ "';";
-                        PreparedStatement PreparedUpdateUserStatement = connection.prepareStatement(updateUser);
-                        PreparedUpdateUserStatement.executeUpdate();
+                        PreparedStatement updateUserStatement = connection.prepareStatement(updateUser);
+                        updateUserStatement.executeUpdate();
                         break;    
+    
                         
                 }
             }
@@ -390,6 +396,3 @@ public class IntegratedCA_OOA {
         //collegeManageUsers();
     }
 }
-
-
-
