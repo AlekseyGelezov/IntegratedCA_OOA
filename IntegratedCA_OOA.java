@@ -11,7 +11,9 @@ import java.util.Scanner;
 
 /**
  *
- * @author aleksey student number: sba23107
+ * https://github.com/AlekseyGelezov/IntegratedCA_OOA.git
+ * @author aleksey
+ * student number: sba23107
  *
  */
 public class IntegratedCA_OOA {
@@ -382,5 +384,6 @@ public class IntegratedCA_OOA {
         //collegeManageUsers();
     }
 }
+
 
 
