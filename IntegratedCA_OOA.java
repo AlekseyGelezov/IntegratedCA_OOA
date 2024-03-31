@@ -5,23 +5,20 @@
 package integratedca_ooa;
 
 import java.io.*;
-import java.sql. * ;
+import static java.lang.constant.ConstantDescs.NULL;
+import java.sql.*;
 import java.util.Scanner;
 
 /**
  *
- * @author aleksey
- * student number: sba23107
- * 
+ * @author aleksey student number: sba23107
+ *
  */
 public class IntegratedCA_OOA {
 
     /**
      * @param args the command line arguments
      */
-    
-    
-    
     // ALLOWS ACCESS OF MYSQL DATABASE & TABLES. ALSO DEFINES STRINGS AND SCANNER REQUIRED FOR TERMINAL USAGE
     private static String SQLurl = "jdbc:mysql://localhost:3306/col_database";
     private static String SQLuser = "aleksey";
@@ -29,366 +26,361 @@ public class IntegratedCA_OOA {
     private static Scanner user_input = new Scanner(System.in);
     private static String terminaluser;
 
+   
     
     // USER TERMINAL, ALLOWS USER TO LOG IN AS ADMIN, OFFICE OR LECTURER
-public static void collegeLoginInput(){
+    public static void collegeLoginInput(String SQLurl, String SQLuser, String SQLpassword) throws SQLException {
+        Connection init_connection = DriverManager.getConnection(SQLurl, SQLuser, SQLpassword);
+        System.out.println("College Database Connection Established!");
         System.out.println("Please enter your username: ");
         String col_username = user_input.nextLine();
         System.out.println("Please enter your password: ");
         String col_password = user_input.nextLine();
-       
-        if(col_username.equals("admin") && col_password.equals("java")){
-            terminaluser = "admin";
-            System.out.println("Hello, Administrator!");
-        }else if(col_username.equals("office") && col_password.equals("java")){
-            terminaluser = "Office";
-            System.out.println("Hello, Office Employee!");
-        }else if(col_username.equals("lecture") && col_password.equals("java")){
-            terminaluser = "Lecturer";
-            System.out.println("Hello, Lecturer!");
-        }else{
-            System.out.println("Login failed. Check if your username or password was correct.");
-            collegeLoginInput();
+        //--------------------------------------------------------------------
+        String loginNameQuery = "SELECT user_full_name, user_login_name, user_password FROM users WHERE user_login_name = '" + col_username + "'";
+        PreparedStatement PreparedLoginNameStatement = init_connection.prepareStatement(loginNameQuery);
+        ResultSet loginNameSet = PreparedLoginNameStatement.executeQuery();
+        if (loginNameSet.next()) {
+            String userFullName = loginNameSet.getString("user_full_name");
+            String userLoginName = loginNameSet.getString("user_login_name");
+            String userPassword = loginNameSet.getString("user_password");
+            
+            // not registered
+            if (userLoginName.equals("") || userLoginName.equals(NULL)) {
+                System.out.println("User is not registered");
+            }
+            // admin
+            if (col_username.equals("admin") && col_password.equals(userPassword)) {
+                System.out.println("Hello, " + userFullName);
+                terminaluser = "admin";
+            }
+            // office
+            else if (col_username.equals("office") && col_password.equals(userPassword)) {
+                System.out.println("Hello, " + userFullName);
+                terminaluser = "office";
+            }
+            // lecturer
+            else if (col_username.equals("lecturer") && col_password.equals(userPassword)) {
+                System.out.println("Hello, " + userFullName);
+                terminaluser = "lecturer";
+            }
+            else {
+                System.out.println("Login failed. Check if your username or password was correct.");
+            }
+            }
         }
+    
 
-}
-
-
-public static void displayConsole(){
+    public static void displayConsole() {
         try {
-        FileWriter c_report = new FileWriter("c_report.csv");
-        
-        FileWriter s_report = new FileWriter("s_report.csv");
-        
-        FileWriter l_report = new FileWriter("l_report.csv");
-        
-        FileWriter id_report = new FileWriter("id_report.csv");
-       
-        Connection connection = DriverManager.getConnection(SQLurl, SQLuser, SQLpassword);
-        System.out.println("College Database Connection Established!");
-       
-        String CourseReportQuery = "SELECT * FROM Courses";
-        PreparedStatement c_Statement = connection.prepareStatement(CourseReportQuery);
-        ResultSet c_result = c_Statement.executeQuery();
-              
-        String GradesReportQuery = "SELECT * FROM grades";
-        PreparedStatement g_Statement = connection.prepareStatement(GradesReportQuery);
-        ResultSet g_result = g_Statement.executeQuery();
-        
-        String StudentReportQuery = "SELECT * FROM students";
-        PreparedStatement s_Statement = connection.prepareStatement(StudentReportQuery);
-        ResultSet s_result = s_Statement.executeQuery();
-       
-        String LecturerReportQuery = "SELECT * FROM Lecturers";
-        PreparedStatement l_Statement = connection.prepareStatement(LecturerReportQuery);
-        ResultSet l_result = l_Statement.executeQuery();
-       
-        
-        
-        
-        
-        
-        
-        
-        
+            FileWriter c_report = new FileWriter("c_report.csv");
 
-//-- SELECT student_name FROM students where student_id=+student_id+ LIMIT 1
-//-- SELECT student_id from enrollments;
-//-- SELECT module_name from courses where programme_name = (SELECT programme_name from courses where programme_id=(select programme_id from enrollments where student_id=(SELECT student_id FROM students where student_name='Michael Young' LIMIT 1) LIMIT 1) LIMIT 1)
-//-- SELECT passed_module_id, grades_passed FROM grades where student_id = (SELECT student_id FROM students where student_name='Michael Young' LIMIT 1)
-//-- SELECT passed_module_id FROM grades where student_id = (SELECT student_id FROM students where student_name='Michael Young' LIMIT 1)
-// -- SELECT module_name from courses where module_id = (SELECT passed_module_id FROM grades where student_id = (SELECT student_id FROM students where student_name='Michael Young' LIMIT 1))
-        
-        
-        while (true){
-            System.out.println("Enter \"1 to generate a Course Report\", \"2 to generate a Student Report\", \"3 to generate a Lecturer Report\" , \"4 to change password\",\"5 to generate report by student ID\", \"6 to Log out\"");
-            if(terminaluser.equals("admin")){
-                System.out.println("\"7 to Manage Users\"");
-            }
-            System.out.println("Select an option: ");
-            int user_choice = user_input.nextInt();
-            user_input.nextLine();
-       
+            FileWriter s_report = new FileWriter("s_report.csv");
+
+            FileWriter l_report = new FileWriter("l_report.csv");
+
+            FileWriter s_report_by_id = new FileWriter("s_report_by_id.csv");
             
-        switch (user_choice) {
-        case 1:
+            FileWriter l_report_by_id = new FileWriter("l_report_by_id.csv");
+            
+            
+
+            //FileWriter er_report = new FileWriter("er_report.csv");
+            //FileWriter fb_report = new FileWriter("fb_report.csv");
+            Connection connection = DriverManager.getConnection(SQLurl, SQLuser, SQLpassword);
+//            System.out.println("College Database Connection Established!");
+
+            String CourseReportQuery = "SELECT * FROM courses";
+            PreparedStatement c_Statement = connection.prepareStatement(CourseReportQuery);
+            ResultSet c_result = c_Statement.executeQuery();
+
+            String GradesReportQuery = "SELECT * FROM grades";
+            PreparedStatement g_Statement = connection.prepareStatement(GradesReportQuery);
+            ResultSet g_result = g_Statement.executeQuery();
+
+
+            while (true) {
+                if (terminaluser.equals("admin")) {
+                    System.out.println("Enter \"6 to change password\", \"8 to create new user\", \"9 to delete user\", \"10 to update user password\", \"7 to Log out\"");
+                }
+                if (terminaluser.equals("office")) {
+                    System.out.println("Enter \"1 to generate a Course Report\", \"2 to generate a Student Report\", \"3 to generate a Lecturer Report\" ,\"4 to generate report by lecturer ID\", \"5 to generate report by student ID\", \"6 to change password\", \"7 to Log out\"");
+
+                }
+                if (terminaluser.equals("lecturer")) {
+                    System.out.println("Enter \"4 to generate a Lecturer Report\" ,\"6 to change password\", \"7 to Log out\"");
+
+                }
+
+                System.out.println("Select an option: ");
+                int user_choice = user_input.nextInt();
+                user_input.nextLine();
+
+                switch (user_choice) {
+                    case 1:
 // GENERATES A COURSE REPORT, COURSE REPORT CONTAINS PROGRAMME NAME, 
-            String c_heading = "Module,Programme,Students Enrolled,Classroom,Lecturer\n";
-            c_report.write(c_heading);
-            
-            while (c_result.next()) {
-                c_report.append((c_result.getString("module_name"))).append(",");          
-                c_report.append((c_result.getString("programme_name"))).append(",");
-                c_report.append(String.valueOf(c_result.getInt("module_capacity"))).append(",");
-                c_report.append(c_result.getString("location")).append(",");
-                String lecturerid = c_result.getString("lecturer_id");
-                    if (lecturerid != null) {
-                        String lecturernamequery = "SELECT lecturer_name FROM lecturers WHERE lecturer_id = '"  + lecturerid + "'";                      
-                        PreparedStatement PreparedLecturerNameStatement = connection.prepareStatement(lecturernamequery);               
-                        ResultSet lecturerNameSet = PreparedLecturerNameStatement.executeQuery();                       
-                        if(lecturerNameSet.next()){
-                            String lecturerName = lecturerNameSet.getString("lecturer_name");
-                            c_report.append((lecturerName)).append("\n");
-                        }                        
-                    }                
-            }
-        //write here outside while
+                        String c_heading = "Module,Programme,Students Enrolled,Classroom,Lecturer\n";
+                        c_report.write(c_heading);
 
-            c_report.flush();
-            c_report.close();
-            break;
-            
-        case 2:
-            String s_heading = "Student ID,Student Name,Programme,Current Module,Completed Module,Grades,Module To Repeat\n";
-            s_report.write(s_heading);
-              while(g_result.next()){
-                s_report.append((g_result.getString("student_id"))).append(",");
-                String studentId = g_result.getString("student_id");
-                    if (studentId != null) {
-                        String studentnamequery = "SELECT student_name FROM students WHERE student_id = '"  + studentId + "'";                      
-                        PreparedStatement PreparedStudentNameStatement = connection.prepareStatement(studentnamequery);               
-                        ResultSet studentNameSet = PreparedStudentNameStatement.executeQuery();                       
-                        if(studentNameSet.next()){
+                        while (c_result.next()) {
+                            c_report.append((c_result.getString("module_name"))).append(",");
+                            c_report.append((c_result.getString("programme_name"))).append(",");
+                            c_report.append(String.valueOf(c_result.getInt("module_capacity"))).append(",");
+                            c_report.append(c_result.getString("location")).append(",");
+                            //c_report.append(c_result.getString("lecturer_id")).append(",");
+
+                            String lecturerid = c_result.getString("lecturer_id");
+//                System.out.println(lecturerid + " <--------Lecturer ID");
+                            if (lecturerid != null) {
+                                String lecturernamequery = "SELECT lecturer_name FROM lecturers WHERE lecturer_id = '" + lecturerid + "'";
+                                PreparedStatement PreparedLecturerNameStatement = connection.prepareStatement(lecturernamequery);
+                                ResultSet lecturerNameSet = PreparedLecturerNameStatement.executeQuery();
+                                if (lecturerNameSet.next()) {
+                                    String lecturerName = lecturerNameSet.getString("lecturer_name");
+                                    c_report.append((lecturerName)).append("\n");
+                                }
+                            }
+                        }
+                        //write here outside while
+
+                        c_report.flush();
+                        c_report.close();
+                        break;
+
+                    case 2:
+                        String s_heading = "Student ID,Student Name,Programme,Current Module,Completed Module,Grades,Module To Repeat,Grades for Failed Module\n";
+                        s_report.write(s_heading);
+                        while (g_result.next()) {
+                            s_report.append((g_result.getString("student_id"))).append(",");
+                            String studentId = g_result.getString("student_id");
+                            if (studentId != null) {
+                                String studentnamequery = "SELECT student_name FROM students WHERE student_id = '" + studentId + "'";
+                                PreparedStatement PreparedStudentNameStatement = connection.prepareStatement(studentnamequery);
+                                ResultSet studentNameSet = PreparedStudentNameStatement.executeQuery();
+                                if (studentNameSet.next()) {
+                                    String studentName = studentNameSet.getString("student_name");
+                                    s_report.append((studentName)).append(",");
+                                }
+                            }
+                            String moduleId = g_result.getString("module_id");
+                            if (moduleId != null) {
+                                String modulenamequery = "SELECT module_name, programme_name FROM courses WHERE module_id = '" + moduleId + "'";
+                                PreparedStatement PreparedModuleNameStatement = connection.prepareStatement(modulenamequery);
+                                ResultSet moduleNameSet = PreparedModuleNameStatement.executeQuery();
+                                if (moduleNameSet.next()) {
+                                    String programmeName = moduleNameSet.getString("programme_name");
+                                    s_report.append((programmeName)).append(",");
+                                    String moduleName = moduleNameSet.getString("module_name");
+                                    s_report.append((moduleName)).append(",");
+
+                                }
+                            }
+
+                            s_report.append((g_result.getString("passed_module_id"))).append(",");
+                            s_report.append((g_result.getString("grades_passed"))).append(",");
+                            String fModuleId = g_result.getString("failed_module_id");
+                            if (fModuleId != "") {
+                                s_report.append((g_result.getString("failed_module_id"))).append(",");
+                                s_report.append((g_result.getString("grades_failed"))).append("\n");
+                            }
+
+                        }
+
+                        s_report.flush();
+                        s_report.close();
+                        break;
+
+                    case 3:
+                        String l_heading = "Lecturer Name,Lecturer Role,Programme ID,Module Name,Students Enrolled\n";
+                        l_report.write(l_heading);
+                        while (c_result.next()) {
+                            String lecturerid = c_result.getString("lecturer_id");
+                            if (lecturerid != null) {
+                                String lecturernamequery = "SELECT lecturer_name, lecturer_role FROM lecturers WHERE lecturer_id = '" + lecturerid + "'";
+                                PreparedStatement PreparedLecturerNameStatement = connection.prepareStatement(lecturernamequery);
+                                ResultSet lecturerNameSet = PreparedLecturerNameStatement.executeQuery();
+                                if (lecturerNameSet.next()) {
+                                    String lecturerName = lecturerNameSet.getString("lecturer_name");
+                                    l_report.append((lecturerName)).append(",");
+                                    String lecturerRole = lecturerNameSet.getString("lecturer_role");
+                                    l_report.append((lecturerRole)).append(",");
+                                }
+                            }
+                            l_report.append((c_result.getString("programme_id"))).append(",");
+                            l_report.append((c_result.getString("module_name"))).append(",");
+                            l_report.append(String.valueOf(c_result.getInt("module_capacity"))).append("\n");
+                        }
+                        l_report.flush();
+                        l_report.close();
+                        break;
+                        
+                    //--------------------------------------------------------
+                    case 4:
+                        System.out.println("Enter valid Lecturer ID");
+                        String lecturerid = user_input.nextLine();
+                        String l_heading_by_id = "Lecturer Name,Lecturer Role,Programme ID,Module Name,Students Enrolled\n";
+                        l_report_by_id.write(l_heading_by_id);
+                        while (c_result.next()) {
+//                            String lecturerid = c_result.getString("lecturer_id");
+//                            if (lecturerid != null) {
+                            String lecturernamequery = "SELECT lecturer_name, lecturer_role FROM lecturers WHERE lecturer_id = '" + lecturerid + "'";
+                            PreparedStatement PreparedLecturerNameStatement = connection.prepareStatement(lecturernamequery);
+                            ResultSet lecturerNameSet = PreparedLecturerNameStatement.executeQuery();
+                            if (lecturerNameSet.next()) {
+                                String lecturerName = lecturerNameSet.getString("lecturer_name");
+                                l_report_by_id.append((lecturerName)).append(",");
+                                String lecturerRole = lecturerNameSet.getString("lecturer_role");
+                                l_report_by_id.append((lecturerRole)).append(",");
+                                }
+//                            }
+                            l_report_by_id.append((c_result.getString("programme_id"))).append(",");
+                            l_report_by_id.append((c_result.getString("module_name"))).append(",");
+                            l_report_by_id.append(String.valueOf(c_result.getInt("module_capacity"))).append("\n");
+                        }
+                        l_report_by_id.flush();
+                        l_report_by_id.close();
+                        break;    
+                        
+                        
+                        
+                    //--------------------------------------------------------    
+
+                    case 5:
+                        System.out.println("Enter valid Student ID");
+                        String studentId = user_input.nextLine();
+                        String s_heading_id = "Student ID,Student Name,Programme,Current Module,Completed Module,Grades,Module To Repeat,Feedback\n";
+                        s_report_by_id.write(s_heading_id);
+                        s_report_by_id.append((studentId)).append(",");
+                        String studentnamequery = "SELECT student_name FROM students WHERE student_id = '" + studentId + "'";
+                        PreparedStatement PreparedStudentNameStatement = connection.prepareStatement(studentnamequery);
+                        ResultSet studentNameSet = PreparedStudentNameStatement.executeQuery();
+                        if (studentNameSet.next()) {
                             String studentName = studentNameSet.getString("student_name");
-                            s_report.append((studentName)).append(",");
-                        }                        
-                    } 
-                String moduleId = g_result.getString("module_id");
-                    if (moduleId != null) {
-                        String modulenamequery = "SELECT module_name, programme_name FROM courses WHERE module_id = '"  + moduleId + "'";                      
-                        PreparedStatement PreparedModuleNameStatement = connection.prepareStatement(modulenamequery);               
-                        ResultSet moduleNameSet = PreparedModuleNameStatement.executeQuery();                       
-                        if(moduleNameSet.next()){
-                            String programmeName = moduleNameSet.getString("programme_name");
-                            s_report.append((programmeName)).append(","); 
-                            String moduleName = moduleNameSet.getString("module_name");
-                            s_report.append((moduleName)).append(",");
-                           
-                        }                        
-                    }                              
-                s_report.append((g_result.getString("grades_passed"))).append("\n");
-             }
-              
-             
-                    
-             s_report.flush();
-             s_report.close();
-            break;
-            
-            case 3:
-            String l_heading = "Lecturer Name,Lecturer Role,Programme ID,Module Name,Students Enrolled\n";
-            l_report.write(l_heading);
-            while(c_result.next()){
-                String lecturerid = c_result.getString("lecturer_id");
-                    if (lecturerid != null) {
-                        String lecturernamequery = "SELECT lecturer_name, lecturer_role FROM lecturers WHERE lecturer_id = '"  + lecturerid + "'";                      
-                        PreparedStatement PreparedLecturerNameStatement = connection.prepareStatement(lecturernamequery);               
-                        ResultSet lecturerNameSet = PreparedLecturerNameStatement.executeQuery();                       
-                        if(lecturerNameSet.next()){
-                            String lecturerName = lecturerNameSet.getString("lecturer_name");
-                            l_report.append((lecturerName)).append(",");
-                            String lecturerRole = lecturerNameSet.getString("lecturer_role");
-                            l_report.append((lecturerRole)).append(",");
-                        }                        
-                    }                
-                l_report.append((c_result.getString("programme_id"))).append(",");
-                l_report.append((c_result.getString("module_name"))).append(",");
-                l_report.append(String.valueOf(c_result.getInt("module_capacity"))).append("\n");
+                            s_report_by_id.append((studentName)).append(",");
+                        }
+
+                        String programmeNameQuery = "SELECT programme_name FROM courses WHERE programme_id = (SELECT programme_id FROM grades WHERE student_id = '" + studentId + "') limit 1";
+                        PreparedStatement PreparedProgNameStatement = connection.prepareStatement(programmeNameQuery);
+                        ResultSet progNameSet = PreparedProgNameStatement.executeQuery();
+                        if (progNameSet.next()) {
+                            String programmeName = progNameSet.getString("programme_name");
+                            s_report_by_id.append((programmeName)).append(",");
+                        }
+                        String currentModuleNameQuery = "SELECT module_name FROM courses WHERE module_id = (SELECT module_id FROM grades WHERE student_id = '" + studentId + "')";
+                        PreparedStatement PreparedModNameStatement = connection.prepareStatement(currentModuleNameQuery);
+                        ResultSet modNameSet = PreparedModNameStatement.executeQuery();
+                        if (modNameSet.next()) {
+                            String moduleName = modNameSet.getString("module_name");
+                            s_report_by_id.append((moduleName)).append(",");
+                        }
+                        String passedModuleNameQuery = "SELECT module_name FROM courses WHERE module_id = (SELECT passed_module_id FROM grades WHERE student_id = '" + studentId + "')";
+                        PreparedStatement PreparedPassModNameStatement = connection.prepareStatement(passedModuleNameQuery);
+                        ResultSet passModNameSet = PreparedPassModNameStatement.executeQuery();
+                        if (passModNameSet.next()) {
+                            String passedModuleName = passModNameSet.getString("module_name");
+                            s_report_by_id.append((passedModuleName)).append(",");
+                        }
+                        String passedModuleGradesQuery = "SELECT grades_passed FROM grades WHERE student_id = '" + studentId + "'";
+                        PreparedStatement PreparedPassModGradesStatement = connection.prepareStatement(passedModuleGradesQuery);
+                        ResultSet passModGradesSet = PreparedPassModGradesStatement.executeQuery();
+                        if (passModGradesSet.next()) {
+                            String passedModuleGrades = passModGradesSet.getString("grades_passed");
+                            s_report_by_id.append((passedModuleGrades)).append(",");
+                        }
+                        String failedModuleNameQuery = "SELECT module_name FROM courses WHERE module_id = (select failed_module_id from grades where student_id = '" + studentId + "')";
+                        PreparedStatement PreparedFailedModNameStatement = connection.prepareStatement(failedModuleNameQuery);
+                        ResultSet failedModNameSet = PreparedFailedModNameStatement.executeQuery();
+                        if (failedModNameSet.next()) {
+                            String failedModuleName = failedModNameSet.getString("module_name");
+                            s_report_by_id.append((failedModuleName)).append(",");
+                        }
+                                                
+                        String studentFeedbackQuery = "SELECT feedback FROM feedback WHERE student_id = '" + studentId + "'";
+                        PreparedStatement PreparedFeedbackStatement = connection.prepareStatement(studentFeedbackQuery);
+                        ResultSet feedbackSet = PreparedFeedbackStatement.executeQuery();
+                        if (feedbackSet.next()) {
+                            String feedback = feedbackSet.getString("feedback");
+                            s_report_by_id.append((feedback)).append("\n");
+                        }
+
+                        s_report_by_id.flush();
+                        s_report_by_id.close();
+                        break;
+                       
+
+                    case 6:
+                        // to change own password       
+                        System.out.println("Please enter your new password, no more then 16 characters");
+                        String newPassword = user_input.nextLine();
+                        
+                        String changeOwnPassword = "UPDATE users SET user_password = '" +newPassword+"' WHERE user_login_name = '" +terminaluser+"';";
+                        PreparedStatement PreparedChangeOwnPasswordStatement = connection.prepareStatement(changeOwnPassword);
+                        PreparedChangeOwnPasswordStatement.executeUpdate();
+                        
+                        System.out.println("Please, logout and login again");
+                        break;
+                    case 7:
+                        // to logout
+                        System.out.println("Logging out...");
+                        System.exit(0);
+                        break;
+                    case 8:
+//                      // create user
+                        String lastUserIdquery = "SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1;";
+                        PreparedStatement PreparedLastuserIdStatement = connection.prepareStatement(lastUserIdquery);
+                        ResultSet lastUserIdSet = PreparedLastuserIdStatement.executeQuery();
+                        if (lastUserIdSet.next()) {
+                            String lastUserId = lastUserIdSet.getString("user_id");
+                            System.out.println("The last user ID registered in the system is: " + lastUserId);
+                            System.out.println("Please, enter new User ID increment 1");
+                            String newUserId = user_input.nextLine();
+                            System.out.println("Please, enter full user name");
+                            String newUserName = user_input.nextLine();
+                            System.out.println("Please, enter new user role (lecturer, office)");
+                            String newUserRole = user_input.nextLine();
+                            System.out.println("Please, enter new user login name");
+                            String newUserLoginName = user_input.nextLine();
+                            System.out.println("Please, enter new user password (max 16 characters)");
+                            String newUserPassword = user_input.nextLine();
+                            String createNewUser = "INSERT INTO users(user_id,user_full_name,user_role,user_login_name,user_password) VALUES('" +newUserId+"','" +newUserName+"','" +newUserRole+"','" +newUserLoginName+ "','" +newUserPassword+ "');";
+                            PreparedStatement PreparedCreateUserStatement = connection.prepareStatement(createNewUser);
+                            PreparedCreateUserStatement.execute();
+                        }
+                        break;
+                        
+                        case 9:
+                        // delete user
+                        System.out.println("Please, enter user ID to delete");
+                        String userIdToDelete = user_input.nextLine();
+                        String deleteUser = "DELETE FROM users where user_id = '" +userIdToDelete+ "'";
+                        PreparedStatement PreparedDeleteUserStatement = connection.prepareStatement(deleteUser);
+                        PreparedDeleteUserStatement.execute();
+                        break;    
+                        
+                        case 10:
+                        // update user password
+                        System.out.println("Please, enter user ID to update password");
+                        String userIdToUpdate = user_input.nextLine();
+                        System.out.println("Please, enter new password");
+                        String userNewPassword = user_input.nextLine();
+                        String updateUser = "UPDATE users SET user_password = '" +userNewPassword+ "' WHERE user_id = '" +userIdToUpdate+ "';";
+                        PreparedStatement PreparedUpdateUserStatement = connection.prepareStatement(updateUser);
+                        PreparedUpdateUserStatement.executeUpdate();
+                        break;    
+                        
+                }
             }
-            l_report.flush();
-            l_report.close();
-            break;
-            
-//            case 4:
-//                collegeChangePassword();
-//            break;
-            /*
-            case 5:
-            System.out.println("Enter valid Student ID");
-            String studentId = user_input.nextLine();
-            String id_heading = "Student ID,Student Name,Programme,Current Module,Completed Module,Grades\n";
-            id_report.write(id_heading);
-              //while(g_result.next()){
-                //s_report.append((g_result.getString("student_id"))).append(",");
-                //String studentId = g_result.getString("student_id");
-                id_report.append(studentId).append(",");
-
-                String studentnamequery = "SELECT student_name FROM students WHERE student_id = '"  + studentId + "' LIMIT 1";
-                //System.out.println(studentnamequery + "    <--------------------------");
-                PreparedStatement PreparedStudentNameStatement = connection.prepareStatement(studentnamequery);               
-                ResultSet studentNameSet = PreparedStudentNameStatement.executeQuery();                       
-                if(studentNameSet.next()){
-                    String studentName = studentNameSet.getString("student_name");
-                    id_report.append((studentName)).append(",");
-                    }                        
-
-                String moduleId = g_result.getString("module_id");
-                    if (moduleId != null) {
-                        String modulenamequery = "SELECT module_name, programme_name FROM courses WHERE module_id = '"  + moduleId + "'";                      
-                        PreparedStatement PreparedModuleNameStatement = connection.prepareStatement(modulenamequery);               
-                        ResultSet moduleNameSet = PreparedModuleNameStatement.executeQuery();                       
-                        if(moduleNameSet.next()){
-                            String programmeName = moduleNameSet.getString("programme_name");
-                            id_report.append((programmeName)).append(","); 
-                            String moduleName = moduleNameSet.getString("module_name");
-                            id_report.append((moduleName)).append(",");
-                           
-                        }                        
-                    }                             
-               // id_report.append((g_result.getString("grades_passed"))).append("\n");
-             //}
-              
-             
-                    
-             id_report.flush();
-             id_report.close();
-            break;
-            */
-            // case 6:
-            // System.out.println("Logging out...");
-            //   System.exit(0);
-            //break;
-            
-            // case 7:
-            // collegeManageUsers();
-            // break;
-            
-        }
-        }
-        }catch (SQLException | IOException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
-}
-
-//        private static void collegeChangePassword(){
-//        System.out.println("Enter old password: ");
-//        String oldPassword = user_input.nextLine();
-//        if(oldPassword.equals(change_password)){
-//            System.out.println("Enter new password: ");
-//            String new_password = user_input.nextLine();
-//            change_password = new_password;
-//            System.out.println("Password was changed, try logging in again.");
-//            collegeLoginInput();
-//        }else{
-//            System.out.println("Incorrect password. Please try again.");
-//        }
-//    }
-//        
-//        private static void collegeManageUsers(){
-//        System.out.println("Manage users");
-//        System.out.println("Enter \"1 to add a user\", \"2 to delete a user\", \"3 to update a user\" , \"4 to view users\", \"5 to go back to main menu\"");
-//        int manageUserChoice = user_input.nextInt();
-//        user_input.nextLine();
-//       
-//        switch(manageUserChoice){
-//            case 1:
-//                manage_AddUsers();
-//                break;
-//            case 2:
-//                manage_removeUsers();
-//                break;
-//            case 3:
-//                manage_UpdateUsers();
-//                break;
-//            case 4:
-//                manage_ViewUsers();
-//                break;
-//            case 5:
-//                System.out.println("Returning to the Main Menu...");
-//                displayConsole();
-//                break;
-//            default:
-//                System.out.println("Invalid Input: Please choose between 1 and 5.");
-//        }
-//    }
-//        
-//    private static void manage_AddUsers(){
-//        System.out.println("Enter a user you wish to add: ");
-//        String addedUser = user_input.nextLine();
-//        userManagement.add(addedUser);
-//        System.out.println("User " + addedUser + " added");
-//    }
-//    
-//    private static void manage_removeUsers(){
-//        System.out.println("Enter a user you wish to remove: ");
-//        String user_removed = user_input.nextLine();
-//        if(userManagement.contains(user_removed)){
-//            userManagement.remove(user_removed);
-//            System.out.println("User " + user_removed + " removed");
-//        }else{
-//            System.out.println("ERROR: User does not exist within the college's database.");
-//        }
-//    }
-//    
-//    private static void manage_UpdateUsers(){
-//        System.out.println("Please enter a user name you wish to change: ");
-//        String current_user = user_input.nextLine();
-//        System.out.println("Please enter the username you wish to change your old user name to: ");
-//        String user_new = user_input.nextLine();
-//        if(userManagement.contains(current_user)){
-//            userManagement.remove(current_user);
-//            userManagement.add(user_new);
-//            System.out.println("You have changed your old username to " + user_new);
-//           
-//        }else{
-//            System.out.println("ERROR: This user does not exist within this College");
-//        }
-//    }
-//    
-// private static void manage_ViewUsers(){
-//        for (String listOfUsers : userManagement){
-//            System.out.println(listOfUsers);
-        
-        
+    }
 
 
-public static void main(String[] args) {
-        collegeLoginInput();
+    public static void main(String[] args) throws SQLException {
+        collegeLoginInput(SQLurl,SQLuser,SQLpassword);
         displayConsole();
         //collegeManageUsers();
+    }
 }
-}
-                /*
-                // need to figure out how to deal with null values
-                String failedModuleId = g_result.getString("failed_module_id");
-                    if (failedModuleId != null) {
-                        String failedmodulenamequery = "SELECT module_name FROM courses WHERE module_id = '"  + failedModuleId + "'";                      
-                        PreparedStatement PreparedFailedModuleNameStatement = connection.prepareStatement(failedmodulenamequery);               
-                        ResultSet failedModuleNameSet = PreparedFailedModuleNameStatement.executeQuery();                       
-                        if(failedModuleNameSet.next()){
-                            String moduleName = failedModuleNameSet.getString("module_name");
-                            s_report.append((moduleName)).append("\n");                          
-                        }                       
-                    } 
-                */
 
-                
-                //----------------
-                //call courses by module_id to get module name
-                //call courses by module_id to get programme name   
-                //call courses by module_id to get pass module name
-//===============================================           
-/*
-                String failedModuleId = g_result.getString("failed_module_id");
-                    if (moduleId != null) {
-                        String failedmodulenamequery = "SELECT module_name FROM courses WHERE module_id = '"  + failedModuleId + "'";                      
-                        PreparedStatement PreparedFailedModuleNameStatement = connection.prepareStatement(failedmodulenamequery);               
-                        ResultSet failedModuleNameSet = PreparedFailedModuleNameStatement.executeQuery();                       
-                        if(failedModuleNameSet.next()){
-                            String moduleName = failedModuleNameSet.getString("module_name");
-                            s_report.append((moduleName)).append(",");                          
-                        }                        
-                    }  
-                                
-*/
 
-                
- //==============================================                  
- //-- SELECT student_id FROM students where student_name='Michael Young' LIMIT 1
- //-- SELECT student_id from enrollments;
- //-- SELECT module_name from courses where programme_name = (SELECT programme_name from courses where programme_id=(select programme_id from enrollments where student_id=(SELECT student_id FROM students where student_name='Michael Young' LIMIT 1) LIMIT 1) LIMIT 1)
- //-- SELECT passed_module_id, grades_passed FROM grades where student_id = (SELECT student_id FROM students where student_name='Michael Young' LIMIT 1)
- //-- SELECT passed_module_id FROM grades where student_id = (SELECT student_id FROM students where student_name='Michael Young' LIMIT 1)
-// -- SELECT module_name from courses where module_id = (SELECT passed_module_id FROM grades where student_id = (SELECT student_id FROM students where student_name='Michael Young' LIMIT 1))
-
-//==============================================                
