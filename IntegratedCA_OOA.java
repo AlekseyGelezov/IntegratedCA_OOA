@@ -72,7 +72,7 @@ public class IntegratedCA_OOA {
             }
         }
     
-
+// MENU SYSTEM. ALLOWS FOR GENERATION OF CSV REPORTS (STUDENT, LECTURER, COURSE AND ID REPORTS). THIS CODE ALSO ALLOWS THE USER TO LOG IN AS ADMIN. ONLY ADMIN WILL BE AVAILABLE AT THE START, SO THE USER WILL HAVE TO ADD OFFICE AND LECTURER AS USERS.
     public static void displayConsole() {
         try {
             FileWriter c_report = new FileWriter("c_report.csv");
@@ -120,7 +120,7 @@ public class IntegratedCA_OOA {
 
                 switch (user_choice) {
                     case 1:
-// GENERATES A COURSE REPORT, COURSE REPORT CONTAINS PROGRAMME NAME, 
+// GENERATES A COURSE REPORT, COURSE REPORT CONTAINS PROGRAMME NAME, MODULE NAME, STUDENTS ENROLLED, LOCATION AND LECTURER'S NAME. ALL DONE THROUGH CASE SWITCHES
                         String c_heading = "Module,Programme,Students Enrolled,Classroom,Lecturer\n";
                         c_report.write(c_heading);
 
@@ -148,7 +148,7 @@ public class IntegratedCA_OOA {
                         c_report.flush();
                         c_report.close();
                         break;
-
+// GENERATES A STUDENT REPORT, STUDENT REPORT CONTAINS STUDENT NUMBER, STUDENT NAME, CURRENT MODULE, COMPLETED MODULES, GRADES FOR FAILED AND COMPELTED MODULES AND MODULES THE STUDENTS NEED TO REPEAT
                     case 2:
                         String s_heading = "Student ID,Student Name,Programme,Current Module,Completed Module,Grades,Module To Repeat,Grades for Failed Module\n";
                         s_report.write(s_heading);
@@ -191,7 +191,8 @@ public class IntegratedCA_OOA {
                         s_report.flush();
                         s_report.close();
                         break;
-
+                        
+// GENERATES A LECTURER REPORT, LECTURER REPORT CONTAINS LECTURER NAME, LECTURER ROLE, PROGRAMME OF THE MODULE THEY TEACH, MODULE THEY TEACH, AND AMOUNT OF STUDENTS ENROLLED
                     case 3:
                         String l_heading = "Lecturer Name,Lecturer Role,Programme ID,Module Name,Students Enrolled\n";
                         l_report.write(l_heading);
@@ -217,6 +218,7 @@ public class IntegratedCA_OOA {
                         break;
                         
                     //--------------------------------------------------------
+// GENERATES AN INDIVIDUAL LECTURER'S REPORT BY SEARCHING FOR THEIR ID, CONTAINS LECTURER NAME, ROLE, PROGRAMME OF THEIR MODULE, NAME OF THE MODULE THEY TEACH AND AMOUNT OF STUDENTS ENROLLED
                     case 4:
                         System.out.println("Enter valid Lecturer ID");
                         String lecturerid = user_input.nextLine();
@@ -246,7 +248,7 @@ public class IntegratedCA_OOA {
                         
                         
                     //--------------------------------------------------------    
-
+// GENERATES AN INDIVIDUAL STUDENT'S REPORT BY SEARCHING FOR THEIR ID, CONTAINS EVERYTHING IN STUDENT REPORT AND A FEEDBACK COLUMN (feedback is filled with dummy text)
                     case 5:
                         System.out.println("Enter valid Student ID");
                         String studentId = user_input.nextLine();
@@ -309,7 +311,7 @@ public class IntegratedCA_OOA {
                         s_report_by_id.close();
                         break;
                        
-
+// ALLOWS THE USER TO CHANGE THEIR PASSWORD IF THEY'RE ADMIN, OFFICE, OR LECTURER
                     case 6:
                         // to change own password       
                         System.out.println("Please enter your new password, no more then 16 characters");
@@ -321,13 +323,16 @@ public class IntegratedCA_OOA {
                         
                         System.out.println("Please, logout and login again");
                         break;
+                        
+// LETS THE USER LOG OUT. ENDS THE TERMINAL.
                     case 7:
                         // to logout
                         System.out.println("Logging out...");
                         System.exit(0);
                         break;
+
+// ALLOWS THE ADMIN TO ADD NEW USERS TO THE TERMINAL. ROLES THAT CAN BE ADDED ARE LECTURER AND OFFICE
                     case 8:
-//                      // create user
                         String lastUserIdquery = "SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1;";
                         PreparedStatement PreparedLastuserIdStatement = connection.prepareStatement(lastUserIdquery);
                         ResultSet lastUserIdSet = PreparedLastuserIdStatement.executeQuery();
@@ -350,8 +355,8 @@ public class IntegratedCA_OOA {
                         }
                         break;
                         
+// ALLOWS THE ADMIN TO DELETE A USER FROM THE TERMINAL  
                         case 9:
-                        // delete user
                         System.out.println("Please, enter user ID to delete");
                         String userIdToDelete = user_input.nextLine();
                         String deleteUser = "DELETE FROM users where user_id = '" +userIdToDelete+ "'";
